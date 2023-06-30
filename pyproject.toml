@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "template-python"
+version = "0.1.0"
+description = ""
+authors = ["Ben Wolfaardt <benjaminwolfaardt@gmail.com>"]
+readme = "README.md"
+packages = [{include = "template_python"}]
+
+[tool.poetry.dependencies]
+python = "^3.11.1"
+
+
+[tool.poetry.group.dev.dependencies]
+bandit = {version = "1.7.5", extras = ["toml"]}
+black = "23.3.0"
+flake8 = "6.0.0"
+isort = "5.12.0"
+pre-commit-hooks = "4.4.0"
+mypy = "1.4.1"
+pyupgrade = "3.7.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
