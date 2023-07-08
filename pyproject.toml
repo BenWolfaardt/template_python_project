@@ -7,7 +7,7 @@ readme = "README.md"
 packages = [{include = "template_python"}]
 
 [tool.poetry.dependencies]
-python = "^3.11.1"
+python = "^3.11.3"
 
 
 [tool.poetry.group.dev.dependencies]
@@ -17,6 +17,7 @@ flake8 = "6.0.0"
 isort = "5.12.0"
 pre-commit-hooks = "4.4.0"
 mypy = "1.4.1"
+pre-commit = "3.3.3"
 pyupgrade = "3.7.0"
 
 [build-system]
