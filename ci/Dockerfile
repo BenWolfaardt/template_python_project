@@ -1,4 +1,4 @@
-FROM python:3.11.1-slim
+FROM python:3.11.4-slim
 
 COPY configs /app/configs
 COPY src /app/src
@@ -18,7 +18,7 @@ RUN pip3 install poetry
 RUN poetry config virtualenvs.create false
 RUN poetry install --without dev
 
-# EXPOSE 
+# EXPOSE
 
 COPY ["ci/docker-entrypoint.sh", "/usr/local/bin/docker-entrypoint.sh"]
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
