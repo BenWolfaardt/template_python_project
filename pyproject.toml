@@ -11,6 +11,8 @@ license = ""
 [tool.poetry.dependencies]
 python = "^3.11.3"
 
+envyaml = "1.10.211231"
+
 
 [tool.poetry.group.dev.dependencies]
 bandit = {version = "1.7.5", extras = ["toml"]}
