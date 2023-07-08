@@ -5,6 +5,8 @@ description = ""
 authors = ["Ben Wolfaardt <benjaminwolfaardt@gmail.com>"]
 readme = "README.md"
 packages = [{include = "template_python"}]
+#TODO determine licence
+license = ""
 
 [tool.poetry.dependencies]
 python = "^3.11.3"
@@ -24,3 +26,30 @@ pyupgrade = "3.7.0"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.bandit]
+exclude_dirs = ["*/tests/*"]
+tests = ["B201", "B301"]
+skips = ["B101", "B601"]
+
+[tool.black]
+line-length = 110
+target-version = ['py310']
+
+[tool.isort]
+profile = "black"
+force_single_line = false
+lines_after_imports = 2
+lines_between_types = 1
+use_parentheses = true
+src_paths = ["txns", "tests"]
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = "-ra -q"
+log_cli = 0
+log_cli_level = "INFO"
+log_cli_format = "%(asctime)s [%(levelname)8s] %(message)s (%(filename)s:%(lineno)s)"
+log_cli_date_format = "%Y-%m-%d %H:%M:%S"
+python_files = ["test_*.py"]
+testpaths = ["tests"]
