@@ -4,7 +4,7 @@ version = "0.1.0"
 description = ""
 authors = ["Ben Wolfaardt <benjaminwolfaardt@gmail.com>"]
 readme = "README.md"
-packages = [{include = "template_python"}]
+packages = [{include = "src"}]
 #TODO determine licence
 license = ""
 
