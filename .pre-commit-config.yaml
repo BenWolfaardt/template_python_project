@@ -25,6 +25,7 @@ repos:
     rev: 6.0.0
     hooks:
       - id: flake8
+        args: [--config, .flake8]
 
   # isort sorts imports alphabetically, and automatically separated into sections and by type.
   - repo: https://github.com/timothycrosley/isort

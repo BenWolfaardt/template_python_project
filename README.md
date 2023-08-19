@@ -15,7 +15,9 @@ Setting up our environment
   poetry shell
 ```
 
-> python -m src configs/local.yml
+> `python -m src --env <choice>`
+
+See `python -m src -h` for a list of choices.
 
 ### Run Tests
 

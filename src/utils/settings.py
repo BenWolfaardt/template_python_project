@@ -1,5 +1,4 @@
 import argparse
-import sys
 
 from enum import Enum
 
@@ -12,34 +11,38 @@ class Environment(str, Enum):
     PRODUCTION = "production"
 
 
-def parse_env_arg() -> Environment:
-    parser = argparse.ArgumentParser(description="App environment")
-    parser.add_argument(
-        "environment",
-        metavar="env",
-        type=Environment,
-        help="Configuration environment for the app",
-        choices=Environment.__members__.values(),
-    )
-    cli_args = parser.parse_args()
-    environment: Environment = cli_args.environment
-    if environment not in Environment.__members__:
-        print(f"Environment: {environment} does not exist")
-        sys.exit(1)
-    return environment
+class InvalidEnvironmentError(argparse.ArgumentTypeError):
+    def __init__(self, value: str, choices: list[str]):
+        self.value = value
+        self.choices = choices
+        super().__init__(
+            f"You have entered an incorrect choice: {value}. Your options are \"{', '.join(choices)}\""
+        )
+
+
+def parse_env_arg(value: str) -> str:
+    if value not in [e.value for e in Environment]:
+        raise InvalidEnvironmentError(value, [e.value for e in Environment])
+    return Environment(value)
 
 
 def load_settings() -> "Settings":
-    yaml_config = EnvYAML(f"configs/{parse_env_arg().value}.yml", strict=False)
+    parser = argparse.ArgumentParser(description="App environment")
+    parser.add_argument(
+        "--env",
+        type=parse_env_arg,
+        help="Configuration environment for the app",
+        metavar="ENV",
+    )
+    cli_args = parser.parse_args()
+
+    yaml_config = EnvYAML(f"configs/{cli_args.env.value}.yml", strict=False)
     return Settings(yaml_config)
 
 
 class Settings:
-    def __init__(self, yaml_config: EnvYAML):
+    def __init__(self, yaml_config: EnvYAML) -> None:
         self.config = yaml_config
 
-    def get_section_1(self) -> dict:
-        settings = self.config["section_1"]
-        return {
-            "setting_1": settings["setting_1"],
-        }
+    def section_1(self) -> dict:
+        return dict(self.config["section_1"])
