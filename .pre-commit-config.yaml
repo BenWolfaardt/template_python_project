@@ -50,6 +50,7 @@ repos:
         args: ['--maxkb=1000']
       - id: check-ast
       - id: check-json
+        exclude: '\.vscode/'
       - id: check-yaml
       - id: check-toml
       - id: debug-statements
