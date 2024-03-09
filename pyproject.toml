@@ -11,6 +11,7 @@ license = ""
 [tool.poetry.dependencies]
 python = "^3.11.3"
 
+argparse = "1.4.0"
 envyaml = "1.10.211231"
 
 [tool.poetry.group.dev.dependencies]
