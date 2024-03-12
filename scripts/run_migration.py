@@ -1,10 +1,11 @@
 import argparse
+
+from alembic.util import CommandError  # noqa F401: imported but unused
+
 from src.adapters.database.config import Database
 from src.adapters.logger import Logger
-
 from src.adapters.settings import Settings, _parse_env_arg, load_settings
 from src.core.ports.logging import Logging
-from alembic.util import CommandError  # noqa F401: imported but unused
 
 
 def main() -> None:
