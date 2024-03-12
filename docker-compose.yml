@@ -4,7 +4,7 @@ services:
   app:
     build:
       context: .
-      dockerfile: ci/Dockerfile
+      dockerfile: ci/app/Dockerfile
     container_name: app
     restart: on-failure
     healthcheck:
@@ -12,16 +12,41 @@ services:
       interval: 1s
       timeout: 5s
       retries: 10
-    # depends_on:
-    # volumes:
-    #   - :
+    depends_on:
+      - database
     ports:
-      # - ":"
+      - "8080:8080"
+    networks:
+      - network
+
+  database:
+    build:
+      context: .
+      dockerfile: ci/database/Dockerfile
+      args:
+        USERNAME: ${CONTAINERISED_DB_USER}
+        PASSWORD: ${CONTAINERISED_DB_PASSWORD}
+        DB_NAME: ${CONTAINERISED_DB_NAME}
+    container_name: db
+    restart: unless-stopped
+#    environment:
+#      POSTGRES_HOST_AUTH_METHOD: reject
+    # TODO have the db name dynamic here as well
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U root -d database" ]
+      interval: 1s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - database:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
     networks:
       - network
 
 networks:
-  network: # this network
+  network:
     driver: bridge
 
 volumes:
+  database:
