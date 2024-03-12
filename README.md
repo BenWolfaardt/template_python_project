@@ -1,6 +1,15 @@
-# App
+# Template Python Project
 
-Description.
+A template making use of hexagonal architecture making use of a Pythonic config, SQLAlchemy PostgreSQL DB and FastAPI - the basics to get most projects up and running in no time.
+
+## Todos
+
+- [ ] Update pre-commit to use ruff - see FastApi tutorial  for Pull Request
+- [ ] Update to SQLAlchemy v2
+- [ ] See FastApi template repo for other tips and tricks
+- [ ] pscopy parse in argument in pyprojects.toml
+- [ ] init.sql to work with .env variable - see phoen stack overflow
+- [ ] Have the repetitive part of my README in a gist?
 
 ## Local Setup and Configuration
 
@@ -38,12 +47,9 @@ Setup and run the pre-commit (uses .pre-commit-config.yaml):
   pre-commit run --all-files
 ```
 
-> The above needs to be performed from within the virtual environment otherwise pre-pend with `poetry run`
+> The above needs to be performed from within the virtual environment.
 
-## Ideas
+## Scripts
 
-- Idea_1
-
-## Todos
-
-- [ ] Todo_1
+- `python scripts/run_migration.py --env local`
+  - Create `Alembic` migrations for table changes.
