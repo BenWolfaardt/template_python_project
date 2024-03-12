@@ -5,6 +5,7 @@ from alembic.config import Config
 from alembic.util import CommandError
 from psycopg2 import DatabaseError  # noqa F401: imported but unused
 from sqlalchemy import MetaData, create_engine
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy_utils.functions import create_database, database_exists
 
 from src.adapters.database.alembic_config import AlembicConfig
@@ -25,42 +26,65 @@ class Database:
         self.logger = logger
         self.to_instantiate = False
 
+        self.engine = create_engine(self.db_config.url)
         self._check_db_existance()
 
     def _check_db_existance(self) -> None:
-        self.logger.debug(f"Checking if {self.db_config.name} DB exists")
+        try:
+            self.logger.debug(f"Checking if {self.db_config.name} DB exists")
 
-        engine = create_engine(self.db_config.url)
-        metadata = MetaData()
-        metadata.reflect(bind=engine)
+            metadata = MetaData()
+            metadata.reflect(bind=self.engine)
 
-        if metadata.tables:
-            self.logger.debug(f"Tables for {self.db_config.name} DB already exists")
-        else:
-            self.logger.debug(
-                f"Tables for {self.db_config.name} DB do not exist, setting 'to_instantiate' flag to 'True'"
-            )
-            self.to_instantiate = True
+            if metadata.tables:
+                self.logger.debug(f"Tables for {self.db_config.name} DB already exists")
+            else:
+                self.logger.debug(
+                    f"Tables for {self.db_config.name} DB do not exist, setting 'to_instantiate' flag to 'True'"
+                )
+                self.to_instantiate = True
+
+        except SQLAlchemyError as e:
+            msg = f"{type(e).__name__}, {str(e)}"
+            self.logger.error(msg)
+            raise SQLAlchemyError(msg)
 
     def create(self) -> None:
         self.logger.info(f"Creating {self.db_config.name} engine")
 
-        engine = create_engine(self.db_config.url)
-        if not database_exists(engine.url):
-            self.logger.info(f"{self.db_config.name} DB does not exist, creating...")
-            create_database(engine.url)
+        try:
+            if not database_exists(self.engine.url):
+                self.logger.info(f"{self.db_config.name} DB does not exist, creating...")
+                create_database(self.engine.url)
+
+        except CommandError as e:
+            msg = f"{type(e).__name__}, {str(e)}"
+            self.logger.error(msg)
+            raise SQLAlchemyError(msg)
 
     # alembic revision --autogenerate -m "message"
     def revision(self, message: str, autogenerate: bool = True) -> None:
         self.logger.info(f"Revising {self.db_config.name} DB: {message}")
 
-        command.revision(self.config, message, autogenerate)
+        try:
+            command.revision(self.config, message, autogenerate)
+
+        except CommandError as e:
+            msg = f"{type(e).__name__}, {str(e)}"
+            self.logger.error(msg)
+            raise SQLAlchemyError(msg)
 
     # alembic upgrade head
     def upgrade(self) -> None:
         self.logger.info(f"Running migration(s) on {self.db_config.name} DB; if any")
 
-        command.upgrade(self.config, "head")
+        try:
+            command.upgrade(self.config, "head")
+
+        except CommandError as e:
+            msg = f"CommandError: {type(e).__name__}, {str(e)}"
+            self.logger.error(msg)
+            raise SQLAlchemyError(msg)
 
 
 if __name__ == "__main__":
@@ -78,14 +102,6 @@ if __name__ == "__main__":
     db_config = settings.get_db_config()
     db = Database(db_config, logger)
 
-    try:
-        db.create()
-        if db.to_instantiate:
-            try:
-                db.revision("Instantiation", autogenerate=True)
-            except CommandError as e:
-                db.logger.critical(f"Error performing revision: {type(e).__name__}, {str(e)}")
-        db.upgrade()
-
-    except DatabaseError:
-        logger.critical("Migrations failed")
+    db.create()
+    db.revision("Instantiation", autogenerate=True) if db.to_instantiate else None
+    db.upgrade()

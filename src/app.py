@@ -28,10 +28,7 @@ class App:
 
             db.create()
             if db.to_instantiate:
-                try:
-                    db.revision("Instantiation", autogenerate=True)
-                except CommandError as e:
-                    db.logger.critical(f"Error performing revision: {type(e).__name__}, {str(e)}")
+                db.revision("Instantiation", autogenerate=True)
             db.upgrade()
 
         except DatabaseError:
