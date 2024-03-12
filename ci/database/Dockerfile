@@ -1,0 +1,11 @@
+FROM postgres:16-alpine
+
+ARG USERNAME
+ARG PASSWORD
+ARG DB_NAME
+
+ADD ci/database/init.sql /docker-entrypoint-initdb.d
+
+ENV POSTGRES_USER ${USERNAME}
+ENV POSTGRES_PASSWORD ${PASSWORD}
+ENV POSTGRES_DB ${DB_NAME}
