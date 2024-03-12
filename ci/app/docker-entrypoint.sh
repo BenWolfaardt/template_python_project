@@ -1,2 +1,2 @@
 #!/bin/bash
-python -m src configs/production.yaml
+python -m src --env containerised
