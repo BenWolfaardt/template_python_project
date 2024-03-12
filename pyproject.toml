@@ -9,10 +9,16 @@ packages = [{include = "src"}]
 license = ""
 
 [tool.poetry.dependencies]
-python = "^3.11.3"
+python = "^3.11"
 
+alembic = "1.13.1"
 argparse = "1.4.0"
 envyaml = "1.10.211231"
+fastapi = "0.110.0"
+psycopg2-binary = "2.9.9"
+pydantic = "2.6.3"
+sqlalchemy = "1.4.51"
+sqlalchemy-utils = "0.41.1"
 
 [tool.poetry.group.dev.dependencies]
 bandit = {version = "1.7.5", extras = ["toml"]}
@@ -69,6 +75,7 @@ warn_unused_ignores = true
 [[tool.mypy.overrides]]
 module = [
     "envyaml.*",
+    "pydantic.*"
 ]
 ignore_missing_imports = true
 
