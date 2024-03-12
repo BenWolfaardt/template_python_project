@@ -21,14 +21,8 @@ class ColoredFormatter(logging.Formatter):
 
 
 class Logger(Logging):
-    def __init__(self) -> None:
-        self._logger: logging.Logger | None = None
-
-    @property
-    def logger(self) -> logging.Logger:
-        if self._logger is None:
-            self._logger = self.setup_logger("Template")
-        return self._logger
+    def __init__(self, name: str = "default") -> None:
+        self.logger = self.setup_logger(name)
 
     @staticmethod
     def setup_logger(logger_name: str) -> logging.Logger:
