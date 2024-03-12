@@ -1,4 +1,16 @@
-section_1:
-  key_1: value_1
-  sub_section_1:
-    key_1: sub_section_1_value_1
+execution:
+  logging: "debug"  # TODO also in uvicorn
+  store_type: "SQL"
+
+db:
+  user: ${LOCAL_DB_USER}
+  password: ${LOCAL_DB_PASSWORD}
+  host: ${LOCAL_DB_HOST}
+  port: ${LOCAL_DB_PORT}
+  name: ${LOCAL_DB_NAME}
+  migration_location: "src/adapters/database/migrations"
+
+uvicorn:
+  host: 0.0.0.0
+  log_level: "debug"
+  port: 8080
