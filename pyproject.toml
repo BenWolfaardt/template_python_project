@@ -74,8 +74,12 @@ warn_unused_ignores = true
 
 [[tool.mypy.overrides]]
 module = [
+    "alembic.*",
     "envyaml.*",
-    "pydantic.*"
+    "psycopg2.*",
+    "pydantic.*",
+    "sqlalchemy.*",
+    "sqlalchemy_utils.*"
 ]
 ignore_missing_imports = true
 
