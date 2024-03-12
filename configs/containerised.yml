@@ -1,0 +1,16 @@
+execution:
+  logging: "debug"
+  store_type: "SQL"
+
+db:
+  user: ${CONTAINERISED_DB_USER}
+  password: ${CONTAINERISED_DB_PASSWORD}
+  host: ${CONTAINERISED_DB_HOST}
+  port: ${CONTAINERISED_DB_PORT}
+  name: ${CONTAINERISED_DB_NAME}
+  migration_location: "src/adapters/database/migrations"
+
+uvicorn:
+  host: 0.0.0.0
+  log_level: "debug"
+  port: 80
