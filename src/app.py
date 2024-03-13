@@ -1,6 +1,7 @@
 from alembic.util import CommandError  # noqa F401: imported but unused
 from psycopg2 import DatabaseError
 
+from src.adapters.database.config import Database
 from src.adapters.database.sql_store import SQLStore
 from src.adapters.logger import Logger
 from src.adapters.settings import Settings, load_settings
@@ -22,8 +23,6 @@ class App:
         self.store = SQLStore(db_config.url, self.logger)
 
         try:
-            from src.adapters.database.config import Database
-
             db = Database(db_config, self.logger)
 
             db.check_migration_existance()
@@ -31,7 +30,7 @@ class App:
             db.upgrade()
 
         except DatabaseError:
-            self.logger.critical("Migrations failed")
+            self.logger.critical("Database not setup correctly")
 
         while True:
             pass
