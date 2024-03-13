@@ -26,10 +26,8 @@ class App:
 
             db = Database(db_config, self.logger)
 
-            db.create()
             db.check_migration_existance()
-            if db.to_instantiate:
-                db.revision("Instantiation", autogenerate=True)
+            db.revision("Instantiation", autogenerate=True) if db.to_instantiate else None
             db.upgrade()
 
         except DatabaseError:

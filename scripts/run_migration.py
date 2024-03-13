@@ -21,7 +21,6 @@ def main() -> None:
     db = Database(settings.get_db_config(), logger)  # select DB if multiple
     migration_message = input("Migration message: ")
 
-    db.create()
     db.upgrade()
     db.revision(migration_message, autogenerate=True)
     db.upgrade()
