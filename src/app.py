@@ -27,12 +27,16 @@ class App:
             db = Database(db_config, self.logger)
 
             db.create()
+            db.check_migration_existance()
             if db.to_instantiate:
                 db.revision("Instantiation", autogenerate=True)
             db.upgrade()
 
         except DatabaseError:
             self.logger.critical("Migrations failed")
+
+        while True:
+            pass
 
     def start_services(self) -> None:
         pass  # TODO gracefully shutdown
