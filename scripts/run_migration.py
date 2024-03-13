@@ -1,7 +1,5 @@
 import argparse
 
-from alembic.util import CommandError  # noqa F401: imported but unused
-
 from src.adapters.database.config import Database
 from src.adapters.logger import Logger
 from src.adapters.settings import Settings, _parse_env_arg, load_settings
@@ -25,13 +23,7 @@ def main() -> None:
 
     db.create()
     db.upgrade()
-    try:
-        db.revision(migration_message, autogenerate=True)
-    except CommandError as e:
-        if str(e) == "Target database is not up to date.":
-            db.logger.warning(f"{type(e).__name__}, migration has already been run on DB")
-        else:
-            db.logger.critical(f"Error performing revision: {type(e).__name__}, {str(e)}")
+    db.revision(migration_message, autogenerate=True)
     db.upgrade()
 
 
