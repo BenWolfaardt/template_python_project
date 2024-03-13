@@ -62,7 +62,7 @@ class Settings(SettingsPort, BaseModel):
 
 
 if __name__ == "__main__":
-    config: Settings = load_settings()
+    config = load_settings()
 
     execution_config = config.get_execution_config()
     print(f"Execution Configuration: {execution_config}\n")
