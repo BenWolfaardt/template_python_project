@@ -5,6 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+
+## [1.2.0] - 2024-04-01
+
+### Added
+
+- `FastAPI` server (run as a thread)
+- CRUD interactors
+
+### Fixed
+
+- Custom exception logic
+
+### Changed
+
+- Contents of `Data`
+- `Data` from a `@dataclass` to a `BaseModel` (simplifying `_data_row_to_data`)
+- Config printing now pretty prints in `json`
+
+
 ## [1.1.0] - 2024-03-13
 
 ### Added
