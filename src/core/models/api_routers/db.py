@@ -13,7 +13,7 @@ from src.core.models.data import Data
 # TODO think about request ID, maybe assign a default to it?
 class CreateRequest(BaseModel):
     data: Data
-    request_id: str = ""
+    request_id: str
 
 
 class CreateResponse(BaseModel):
@@ -23,7 +23,7 @@ class CreateResponse(BaseModel):
 
 class ReadRequest(BaseModel):
     id: UUID
-    request_id: str = ""
+    request_id: str
 
 
 class ReadResponse(BaseModel):
@@ -32,7 +32,7 @@ class ReadResponse(BaseModel):
 
 
 class ReadAllRequest(BaseModel):
-    request_id: str = ""
+    request_id: str
 
 
 class ReadAllResponse(BaseModel):
@@ -42,7 +42,7 @@ class ReadAllResponse(BaseModel):
 
 class UpdateRequest(BaseModel):
     data: Data
-    request_id: str = ""
+    request_id: str
 
 
 class UpdateResponse(BaseModel):
@@ -52,7 +52,7 @@ class UpdateResponse(BaseModel):
 
 class DeleteRequest(BaseModel):
     id: UUID
-    request_id: str = ""
+    request_id: str
 
 
 class DeleteResponse(BaseModel):
