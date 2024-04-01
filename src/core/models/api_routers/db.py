@@ -1,19 +1,22 @@
-from datetime import datetime
+from dataclasses import Field
 import json
 
+from datetime import datetime
 from typing import Any
-from uuid import UUID
+from uuid import UUID, uuid4
 
 from fastapi.responses import JSONResponse
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from src.core.models.data import Data
 
 
-# TODO think about request ID, maybe assign a default to it?
-class CreateRequest(BaseModel):
+class BaseRequest(BaseModel):
+    request_id: str | None = Field(default_factory=lambda: str(uuid4()), alias="request_id")
+
+
+class CreateRequest(BaseRequest):
     data: Data
-    request_id: str
 
 
 class CreateResponse(BaseModel):
@@ -21,9 +24,8 @@ class CreateResponse(BaseModel):
     request_id: str
 
 
-class ReadRequest(BaseModel):
+class ReadRequest(BaseRequest):
     id: UUID
-    request_id: str
 
 
 class ReadResponse(BaseModel):
@@ -31,18 +33,16 @@ class ReadResponse(BaseModel):
     request_id: str
 
 
-class ReadAllRequest(BaseModel):
-    request_id: str
-
+class ReadAllRequest(BaseRequest):
+    pass
 
 class ReadAllResponse(BaseModel):
     data: list[Data]
     request_id: str
 
 
-class UpdateRequest(BaseModel):
+class UpdateRequest(BaseRequest):
     data: Data
-    request_id: str
 
 
 class UpdateResponse(BaseModel):
@@ -50,9 +50,8 @@ class UpdateResponse(BaseModel):
     request_id: str
 
 
-class DeleteRequest(BaseModel):
+class DeleteRequest(BaseRequest):
     id: UUID
-    request_id: str
 
 
 class DeleteResponse(BaseModel):
