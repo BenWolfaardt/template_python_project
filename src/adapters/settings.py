@@ -65,10 +65,10 @@ if __name__ == "__main__":
     config = load_settings()
 
     execution_config = config.get_execution_config()
-    print(f"Execution Configuration: {execution_config}\n")
+    print(f"Execution Configuration: {execution_config.to_json()}\n")
 
     db_config = config.get_db_config()
-    print(f"DB Configuration: {db_config}")
+    print(f"DB Configuration: {db_config.to_json()}\n")
     print(f"DB url property: {db_config.url}")
 
     alembic_config = deepcopy(db_config)
@@ -76,4 +76,4 @@ if __name__ == "__main__":
     print(f"Alembic url property: {alembic_config.url}\n")
 
     uvicorn_config = config.get_uvicorn_config()
-    print(f"Uvicorn Configuration: {uvicorn_config}\n")
+    print(f"Uvicorn Configuration: {uvicorn_config.to_json()}\n")

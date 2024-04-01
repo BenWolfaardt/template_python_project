@@ -1,13 +1,20 @@
+import json
+
 from pydantic import BaseModel
 
 
+class BaseConfig(BaseModel):
+    def to_json(self) -> str:
+        return json.dumps(self.model_dump(mode="json", exclude_none=True), sort_keys=True, indent=4)
+
+
 # TODO both should be enums
-class ExecutionConfig(BaseModel):
+class ExecutionConfig(BaseConfig):
     store_type: str
     logging: str
 
 
-class DBConfig(BaseModel):
+class DBConfig(BaseConfig):
     user: str
     password: str
     host: str
@@ -20,7 +27,7 @@ class DBConfig(BaseModel):
         return f"postgresql://{self.user}:{self.password}@{self.host}:{self.port}/{self.name}"
 
 
-class UvicornConfig(BaseModel):
+class UvicornConfig(BaseConfig):
     host: str
     port: int
     log_level: str
