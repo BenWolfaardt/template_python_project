@@ -2,7 +2,6 @@ import time
 
 from collections.abc import Generator
 from contextlib import contextmanager
-from datetime import datetime
 from uuid import UUID
 
 from psycopg2 import errors
@@ -45,8 +44,6 @@ class SQLStore(Store):
                     self.logger.error(
                         f"{row_insert.id} unsuccessfully written to the Data  DB at {timestamp}: {e}"
                     )
-                    # TODO actually raise something?
-                    # TODO more generic exception as well?
                     raise
 
     def read(self, id: UUID) -> Data:
@@ -63,7 +60,7 @@ class SQLStore(Store):
                 raise DataEmpty()
             return [self._data_row_to_data(row) for row in rows]
 
-    def update(self, database: Data) -> None:
+    def update(self, database: Data) -> Data:
         with self.write_session() as session:
             row = session.query(DataRow).filter_by(id=database.id).first()
 
@@ -74,6 +71,8 @@ class SQLStore(Store):
 
             session.merge(row_update)
             session.flush()
+
+            return database
 
     def delete(self, id: UUID) -> None:
         with self.write_session() as session:
@@ -117,15 +116,9 @@ class SQLStore(Store):
 
     @staticmethod
     def _data_row_to_data(row: DataRow) -> Data:
-        def get_value(attr: str) -> str:
-            value = getattr(row, attr, Data())
-            return str(value)
-
-        format_str = "%Y-%m-%d %H:%M:%S"
-
         return Data(
-            id=UUID(get_value("uuid")),
-            data=get_value("data"),
-            timestamp_created=datetime.strptime(get_value("timestamp_created"), format_str),
-            timestamp_updated=datetime.strptime(get_value("timestamp_updated"), format_str),
+            id=row.id,
+            data=row.data,
+            timestamp_created=row.timestamp_created,
+            timestamp_updated=row.timestamp_updated,
         )

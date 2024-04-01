@@ -18,7 +18,7 @@ class Store(ABC):
         pass
 
     @abstractmethod
-    def update(self, data: Data) -> None:
+    def update(self, data: Data) -> Data:
         pass
 
     @abstractmethod

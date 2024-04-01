@@ -19,4 +19,4 @@ class DataRow(DeclarativeBase):
     )
     data = Column(Text, nullable=False)
     timestamp_created = Column(DateTime, nullable=False)
-    email = Column(DateTime, nullable=False)
+    timestamp_updated = Column(DateTime, nullable=False)

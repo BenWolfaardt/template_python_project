@@ -1,18 +1,18 @@
 from uuid import UUID
 
 
-class DataAlreadyExists(RuntimeError):
+class DataAlreadyExists(Exception):
     def __init__(self, id: UUID) -> None:
         self.id = id
+        super().__init__(f"Data with ID '{id}' already exists.")
 
 
-class DataIDNotFound(RuntimeError):
+class DataIDNotFound(Exception):
     def __init__(self, id: UUID) -> None:
         self.id = id
+        super().__init__(f"Data with ID '{id}' not found.")
 
 
-class DataEmpty(RuntimeError):
+class DataEmpty(Exception):
     def __init__(self) -> None:
-        pass
-        # TODO figure out what to put here
-        # logging.exception("Empty DB")
+        super().__init__("No data found.")

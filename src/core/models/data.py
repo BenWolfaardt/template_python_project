@@ -1,18 +1,19 @@
-from dataclasses import dataclass, field
+from dataclasses import field
 from datetime import datetime
-from uuid import UUID
+from uuid import UUID, uuid4
+
+from pydantic import BaseModel, Field, validator
 
 
 class Default:
     pass
 
 
-@dataclass
-class Data:
-    id: UUID = UUID(int=0x12345678123456781234567812345678)  # TODO update this not to be hardcoded
+class Data(BaseModel):
+    id: UUID = Field(default_factory=uuid4)
     data: str = field(default_factory=lambda: str(Default()))
-    timestamp_created: datetime = datetime.now()
-    timestamp_updated: datetime = datetime.now()
+    timestamp_created: datetime = Field(default_factory=datetime.now)
+    timestamp_updated: datetime = Field(default_factory=datetime.now)
 
     def __post_init__(self) -> None:
         sentinel = str(Default())
