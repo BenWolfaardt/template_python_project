@@ -1,4 +1,4 @@
-from uuid import uuid4  # TODO upgradet to newer version
+from uuid import uuid4  # TODO upgrade to newer version
 
 from sqlalchemy import Column, DateTime, Index, Text, UniqueConstraint
 from sqlalchemy.dialects.postgresql import UUID

@@ -52,9 +52,7 @@ class App:
 
         parse_init_args_to_router_db(self.api_crud, self.logger)
 
-        # TODO add this to config?
-        # Version per router? Google this?
-        API_VERSION = "/v1"
+        API_VERSION = "/v1"  # TODO add this to config?
 
         self.api.server.include_router(db_router, prefix=API_VERSION)
 

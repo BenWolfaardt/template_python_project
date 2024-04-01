@@ -1,4 +1,5 @@
 import traceback
+from uuid import uuid4
 
 from fastapi import APIRouter, HTTPException, Query
 
@@ -29,6 +30,8 @@ def parse_init_args_to_router_db(  # noqa C901: too complex
 ) -> None:
     @router.post("/")
     async def create(request: CreateRequest) -> JSONResponse:
+        request_id = request.request_id or str(uuid4())
+        
         try:
             response_data: CreateResponse = api_crud.create(request)
             return JSONResponse(jsonable_encoder(response_data))
@@ -65,9 +68,7 @@ def parse_init_args_to_router_db(  # noqa C901: too complex
             return JSONResponse(jsonable_encoder(response_data))
 
         except Exception as e:
-            # msg = f"Error reading all: {str(e)}"
-            traceback_str = traceback.format_exc()
-            msg = f"Error reading all: {e}\nTraceback: {traceback_str}"
+            msg = f"Error reading all: {str(e)}"
             logger.error(msg)
             raise HTTPException(status_code=500, detail=msg)
 
@@ -96,23 +97,3 @@ def parse_init_args_to_router_db(  # noqa C901: too complex
             msg = f"Error deleting: {str(e)}"
             logger.error(msg)
             raise HTTPException(status_code=500, detail=msg)
-
-
-# TODO add exception handling
-# @app.exception_handler(Error)
-# async def error_handler(_: Request, e: Error):
-#     status_code = 400
-#     if e.error_codes:
-#         if e.error_codes[0] == ErrorCode.unknown_access_token:
-#             status_code = 401
-#         if e.error_codes[0] == ErrorCode.illegal_access:
-#             status_code = 403
-#         if e.error_codes[0] == ErrorCode.user_not_found:
-#             status_code = 404
-#         if e.error_codes[0] == ErrorCode.system_error:
-#             status_code = 500
-
-#     return JSONResponse(
-#         status_code=status_code,
-#         content={"errors": f"{e.error_codes}"},
-#     )
