@@ -62,6 +62,8 @@ class Settings(SettingsPort, BaseModel):
 
 
 if __name__ == "__main__":
+    # ruff: noqa: T201
+
     config = load_settings()
 
     execution_config = config.get_execution_config()
