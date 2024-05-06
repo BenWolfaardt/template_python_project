@@ -1,43 +1,16 @@
+default_language_version:
+  python: python3.11
+
 repos:
-  # bandit is a tool designed to find common security issues in Python code.
-  - repo: https://github.com/PyCQA/bandit
-    rev: 1.7.5
-    hooks:
-      - id: bandit
-        args: ["-v", "-c", "pyproject.toml"]
-        additional_dependencies: [".[toml]"]
-
-  # black is the uncompromising Python code formatter.
-  - repo: https://github.com/psf/black
-    rev: 23.3.0
-    hooks:
-      - id: black
-        args: [--line-length=110]
-
   # dotenv-linter validates and maintains the quality of .env files.
   - repo: https://github.com/wemake-services/dotenv-linter
-    rev: 0.4.0
+    rev: 0.5.0
     hooks:
       - id: dotenv-linter
 
-  # flake8 is a Python code linter that enforces coding style and detects errors in Python code.
-  - repo: https://github.com/pycqa/flake8
-    rev: 6.0.0
-    hooks:
-      - id: flake8
-        args: [--config, .flake8]
-
-  # isort sorts imports alphabetically, and automatically separated into sections and by type.
-  - repo: https://github.com/timothycrosley/isort
-    rev: 5.12.0
-    hooks:
-      - id: isort
-        args: [--line-length 110 --force-single-line-imports false --profile=black --filter-files --multi-line 3 --lines-after-imports 2 --lines-between-types 1 --use-parentheses true ]
-        files: \.py$
-
   # mypy checks type annotations.
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.4.1
+    rev: v1.10.0
     hooks:
       - id: mypy
         args: [--config-file=pyproject.toml]
@@ -48,25 +21,16 @@ repos:
     hooks:
       - id: check-added-large-files
         args: ['--maxkb=1000']
-      - id: check-ast
       - id: check-json
-        exclude: '\.vscode/'
       - id: check-yaml
       - id: check-toml
       - id: debug-statements
-      - id: end-of-file-fixer
-        exclude: ^tests/.*/fixtures/.*
-      - id: trailing-whitespace
-        exclude: |
-          (?x)(
-            ^tests/.*/fixtures/.*
-            | ^tests/console/commands/debug/test_resolve.py
-          )
 
-  # pyupgrade automatically upgrades Python code for improved compatibility and maintainability.
-  - repo: https://github.com/asottile/pyupgrade
-    rev: v3.7.0
+  # An extremely fast Python linter and code formatter, written in Rust.
+  - repo: https://github.com/charliermarsh/ruff-pre-commit
+    rev: v0.4.2
     hooks:
-      - id: pyupgrade
+    -   id: ruff
         args:
-          - --py311-plus
+        - --fix
+    -   id: ruff-format

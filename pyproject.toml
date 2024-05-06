@@ -22,15 +22,12 @@ sqlalchemy-utils = "0.41.1"
 uvicorn = { version = "0.27.0", extras = ["standard"] }
 
 [tool.poetry.group.dev.dependencies]
-bandit = {version = "1.7.5", extras = ["toml"]}
-black = "23.3.0"
-dotenv-linter = "0.4.0"
-flake8 = "6.0.0"
-isort = "5.12.0"
-mypy = "1.4.1"
-pre-commit = "3.3.3"
+dotenv-linter = "0.5.0"
+mypy = "1.10.0"
+pre-commit = "3.7.0"
 pre-commit-hooks = "4.4.0"
-pyupgrade = "3.7.0"
+pytest = "7.4.4"
+ruff = "0.4.2"
 
 [build-system]
 requires = ["poetry-core"]
@@ -94,3 +91,68 @@ log_cli_format = "%(asctime)s [%(levelname)8s] %(message)s (%(filename)s:%(linen
 log_cli_date_format = "%Y-%m-%d %H:%M:%S"
 python_files = ["test_*.py"]
 testpaths = ["tests"]
+
+[tool.ruff]
+target-version = "py311"
+
+exclude = ["alembic"]
+indent-width = 4
+line-length = 110
+
+[tool.ruff.lint]
+# rules from: https://docs.astral.sh/ruff/rules/
+select = [
+    "ANN",  # flake8-annotations
+    "ASYNC",  # flake8-async
+    "S",  # flake8-bandit
+    "B",  # flake8-bugbear
+    # "A",  # flake8-builtins
+    # "COM",  # flake8-commas
+    "C4",  # flake8-comprehensions
+    # "DTZ",  # flake8-datetimez
+    # "EM",  # flake8-errmsg
+    "LOG",  # flake8-logging
+    "G",  # flake8-logging-format
+    # "PIE",  # flake8-pie
+    # "T20",  # flake8-print
+    # "PT",  # flake8-pytest-style
+    "Q",  # flake8-quotes
+    # "RSE",  # flake8-raise
+    # "RET",  # flake8-return
+    "SIM",  # flake8-simplify
+    "TID",  # flake8-tidy-imports
+    "ARG",  # flake8-unused-arguments
+    # "PTH",  # flake8-use-pathlib
+    "I",  # isort
+    # # "N",  # pep8-naming  # TODO: test first
+    "E",  # pycodestyle errors
+    "W",  # pycodestyle warnings
+    "F",  # pyflakes
+    "UP",  # pyupgrade
+    "RUF",  # Ruff-specific rules
+    # "TRY",  # tryceratops
+]
+ignore = [
+    "ANN101",  # Missing type annotation for `self` in method
+    "B008",  # Do not perform function calls in argument defaults
+    "E501",  # Line too long, handled by black
+    "G004",  # Logging statements should not use f"..."
+    "W191",  # Indentation contains tabs
+]
+fixable = ["ALL"]
+unfixable = []
+# logger-objects = ["logging_setup.logger"]  # TODO: test first
+
+[tool.ruff.format]
+line-ending = "auto"
+quote-style = "double"
+skip-magic-trailing-comma = false
+
+[tool.ruff.lint.isort]
+# force-sort-within-sections = true  # TODO: test first
+lines-after-imports = 2
+lines-between-types = 1
+
+[tool.ruff.lint.pyupgrade]
+# Preserve types, even if a file imports `from __future__ import annotations`.
+keep-runtime-typing = true
