@@ -75,6 +75,7 @@ def parse_init_args_to_router_db(api_crud: APICRUD, logger: Logging) -> None:  #
             logger.error(msg)
             raise HTTPException(status_code=500, detail=msg)
 
+    # TODO debug why its not deleting
     @router.delete("/")
     async def delete(id: str, request_id: str = None) -> JSONResponse:
         try:
