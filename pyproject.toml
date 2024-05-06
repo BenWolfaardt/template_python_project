@@ -33,24 +33,6 @@ ruff = "0.4.2"
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
-[tool.bandit]
-exclude_dirs = ["*/tests/*"]
-tests = ["B201", "B301"]
-skips = ["B101", "B601"]
-
-[tool.black]
-line-length = 110
-target-version = ['py311']
-
-[tool.isort]
-profile = "black"
-force_single_line = false
-line_length = 110
-lines_after_imports = 2
-lines_between_types = 1
-use_parentheses = true
-src_paths = ["src", "tests"]
-
 [tool.mypy]
 python_version = "3.11"
 
@@ -109,22 +91,22 @@ select = [
     # "A",  # flake8-builtins
     # "COM",  # flake8-commas
     "C4",  # flake8-comprehensions
-    # "DTZ",  # flake8-datetimez
-    # "EM",  # flake8-errmsg
+    "DTZ",  # flake8-datetimez
+    "EM",  # flake8-errmsg
     "LOG",  # flake8-logging
     "G",  # flake8-logging-format
-    # "PIE",  # flake8-pie
-    # "T20",  # flake8-print
-    # "PT",  # flake8-pytest-style
+    "PIE",  # flake8-pie
+    "T20",  # flake8-print
+    "PT",  # flake8-pytest-style
     "Q",  # flake8-quotes
-    # "RSE",  # flake8-raise
+    "RSE",  # flake8-raise
     # "RET",  # flake8-return
     "SIM",  # flake8-simplify
     "TID",  # flake8-tidy-imports
     "ARG",  # flake8-unused-arguments
-    # "PTH",  # flake8-use-pathlib
+    "PTH",  # flake8-use-pathlib
     "I",  # isort
-    # # "N",  # pep8-naming  # TODO: test first
+    # "N",  # pep8-naming  # TODO: test first
     "E",  # pycodestyle errors
     "W",  # pycodestyle warnings
     "F",  # pyflakes
