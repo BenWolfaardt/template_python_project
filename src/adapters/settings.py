@@ -18,7 +18,7 @@ class Environment(str, Enum):
 
 
 class InvalidEnvironmentError(argparse.ArgumentTypeError):
-    def __init__(self, value: str, choices: list[str]):
+    def __init__(self, value: str, choices: list[str]) -> None:
         self.value = value
         self.choices = choices
         super().__init__(

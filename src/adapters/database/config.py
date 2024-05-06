@@ -51,9 +51,9 @@ class Database:
                 msg = f"{type(e).__name__}, migration has already been run on DB"
                 self.logger.warning(msg)
             else:
-                msg = f"{type(e).__name__}, {str(e)}"
+                msg = f"{type(e).__name__}, {e!s}"
                 self.logger.error(msg)
-                raise CommandError(msg)
+                raise CommandError(msg) from e
 
     # alembic upgrade head
     def upgrade(self) -> None:
@@ -63,9 +63,9 @@ class Database:
             command.upgrade(self.config, "head")
 
         except CommandError as e:
-            msg = f"CommandError: {type(e).__name__}, {str(e)}"
+            msg = f"CommandError: {type(e).__name__}, {e!s}"
             self.logger.error(msg)
-            raise CommandError(msg)
+            raise CommandError(msg) from e
 
 
 if __name__ == "__main__":

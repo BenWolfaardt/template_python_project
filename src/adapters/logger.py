@@ -1,10 +1,12 @@
 import logging
 
+from typing import ClassVar
+
 from src.core.ports.logging import Logging
 
 
 class ColoredFormatter(logging.Formatter):
-    COLORS = {
+    COLORS: ClassVar[dict[str, str]] = {
         "DEBUG": "\033[94m",
         "INFO": "\033[92m",
         "WARNING": "\033[93m",

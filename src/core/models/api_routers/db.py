@@ -1,11 +1,5 @@
-from dataclasses import Field
-import json
-
-from datetime import datetime
-from typing import Any
 from uuid import UUID, uuid4
 
-from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 
 from src.core.models.data import Data
@@ -35,6 +29,7 @@ class ReadResponse(BaseModel):
 
 class ReadAllRequest(BaseRequest):
     pass
+
 
 class ReadAllResponse(BaseModel):
     data: list[Data]
