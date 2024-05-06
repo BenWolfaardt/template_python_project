@@ -35,7 +35,6 @@ class SQLStore(Store):
                 session.flush()
 
                 self.logger.info(f"{row_insert.id} successfully written to the Data DB at {timestamp}")
-                return database
 
             except IntegrityError as e:
                 if isinstance(e.orig, UniqueViolation):
@@ -45,6 +44,9 @@ class SQLStore(Store):
                         f"{row_insert.id} unsuccessfully written to the Data  DB at {timestamp}: {e}"
                     )
                     raise
+
+            else:
+                return database
 
     def read(self, id: UUID) -> Data:
         with self.read_session() as session:
@@ -57,7 +59,7 @@ class SQLStore(Store):
         with self.read_session() as session:
             rows = session.query(DataRow).all()
             if not rows:
-                raise DataEmpty()
+                raise DataEmpty
             return [self._data_row_to_data(row) for row in rows]
 
     def update(self, database: Data) -> Data:

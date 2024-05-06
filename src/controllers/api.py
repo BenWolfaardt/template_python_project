@@ -6,7 +6,7 @@ class API:
         self.server: FastAPI = self.make_http_controller()
 
     def make_http_controller(self) -> FastAPI:
-        app = FastAPI(
+        return FastAPI(
             title="API",
             description="Template Python OpenAPI specification.",
             contact={
@@ -20,5 +20,3 @@ class API:
             },
             version="1.0.0",
         )
-
-        return app
