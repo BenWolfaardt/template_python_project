@@ -60,7 +60,7 @@ Setup and run the pre-commit (uses .pre-commit-config.yaml):
 
 - [ ] Add GitHub actions
 - [ ] Have other branches with less should one want to start from a smaller footprint than this
-- [ ] Update pre-commit to use ruff - see FastApi tutorial for Pull Request
+- [x] Update pre-commit to use ruff - see FastApi tutorial for Pull Request
 - [ ] Update to SQLAlchemy v2
 - [ ] See FastApi template repo for other tips and tricks
 - [ ] pscopy parse in argument in pyprojects.toml
@@ -71,3 +71,4 @@ Setup and run the pre-commit (uses .pre-commit-config.yaml):
 - [ ] Parse in logging level from config to logger
 - [ ] Better FastAPI exception handling: @app.exception_handler(Error)  # async def error_handler(_: Request, e: Error):
 - [ ] Add tracebacks to logging
+- [ ] Use dependabot
