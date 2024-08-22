@@ -11,18 +11,18 @@ from src.adapters.database.alembic_config import AlembicConfig
 from src.adapters.logger import Logger
 from src.adapters.settings import Settings, _parse_env_arg, load_settings
 from src.core.models.configs import DBConfig
-from src.core.ports.logging import Logging
 
 
 class Database:
     def __init__(
         self,
         db_config: DBConfig,
-        logger: Logging,
+        logger: Logger,
     ) -> None:
         self.config: Config = AlembicConfig(db_config.migration_location, db_config.url).create()
         self.db_config = db_config
         self.logger = logger
+        self.exceptions = logger.Exceptions(logger)
         self.to_instantiate = True
 
     def check_migration_existance(self) -> None:
@@ -52,7 +52,7 @@ class Database:
                 self.logger.warning(msg)
             else:
                 msg = f"{type(e).__name__}, {e!s}"
-                self.logger.error(msg)
+                self.logger.exception(msg)
                 raise CommandError(msg) from e
 
     # alembic upgrade head
@@ -64,7 +64,7 @@ class Database:
 
         except CommandError as e:
             msg = f"CommandError: {type(e).__name__}, {e!s}"
-            self.logger.error(msg)
+            self.logger.exception(msg)
             raise CommandError(msg) from e
 
 
@@ -78,7 +78,9 @@ if __name__ == "__main__":
     )
 
     settings: Settings = load_settings()
-    logger: Logging = Logger("Database Config")
+
+    logger_config = settings.get_logger_config()
+    logger = Logger(logger_config, "Manual_Database_Config")
 
     db_config = settings.get_db_config()
     db = Database(db_config, logger)

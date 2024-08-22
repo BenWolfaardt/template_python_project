@@ -3,7 +3,6 @@ import argparse
 from src.adapters.database.config import Database
 from src.adapters.logger import Logger
 from src.adapters.settings import Settings, _parse_env_arg, load_settings
-from src.core.ports.logging import Logging
 
 
 def main() -> None:
@@ -15,10 +14,12 @@ def main() -> None:
         metavar="ENV",
     )
     settings: Settings = load_settings()
-    logger: Logging = Logger("Migration Script")
+
+    logger_config = settings.get_logger_config()
+    logger = Logger(logger_config, "Migration_Script")
 
     # ------------------ User Input ------------------ #
-    db = Database(settings.get_db_config(), logger)  # select DB if multiple
+    db = Database(settings.get_db_config(), logger)  # TODO: select DB if multiple
     migration_message = input("Migration message: ")
 
     db.upgrade()

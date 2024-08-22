@@ -1,53 +1,49 @@
-from uuid import UUID, uuid4
+from uuid import UUID
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 from src.core.models.data import Data
 
 
-class BaseRequest(BaseModel):
-    request_id: str | None = Field(default_factory=lambda: str(uuid4()), alias="request_id")
-
-
-class CreateRequest(BaseRequest):
-    data: Data
-
-
-class CreateResponse(BaseModel):
-    data: Data
+class BaseResponse(BaseModel):
     request_id: str
 
 
-class ReadRequest(BaseRequest):
+class CreateRequest(BaseModel):
+    data: Data
+
+
+class CreateResponse(BaseResponse):
+    data: Data
+
+
+class ReadRequest(BaseModel):
     id: UUID
 
 
-class ReadResponse(BaseModel):
+class ReadResponse(BaseResponse):
     data: Data
-    request_id: str
 
 
-class ReadAllRequest(BaseRequest):
-    pass
+class ReadAllRequest(BaseModel):
+    id: UUID | None  # TODO: shouldn't use id as it is a reserved keyword
 
 
-class ReadAllResponse(BaseModel):
+class ReadAllResponse(BaseResponse):
     data: list[Data]
-    request_id: str
 
 
-class UpdateRequest(BaseRequest):
+class UpdateRequest(BaseModel):
     data: Data
 
 
-class UpdateResponse(BaseModel):
+class UpdateResponse(BaseResponse):
     data: Data
-    request_id: str
 
 
-class DeleteRequest(BaseRequest):
+class DeleteRequest(BaseModel):
     id: UUID
 
 
-class DeleteResponse(BaseModel):
-    request_id: str
+class DeleteResponse(BaseResponse):
+    success: bool

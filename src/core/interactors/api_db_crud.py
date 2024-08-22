@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from uuid import uuid4
 
 from src.core.models.api_routers.db import (
     CreateRequest,
@@ -21,17 +20,17 @@ class APICRUD:
     store: Store
 
     # TODO don't create the uuid4 at Response level
-    def create(self, r: CreateRequest) -> CreateResponse:
-        return CreateResponse(data=self.store.create(r.data), request_id=r.request_id or str(uuid4()))
+    def create(self, r: CreateRequest, request_id: str) -> CreateResponse:
+        return CreateResponse(data=self.store.create(r.data), request_id=request_id)
 
-    def read(self, r: ReadRequest) -> ReadResponse:
-        return ReadResponse(data=self.store.read(r.id), request_id=r.request_id or str(uuid4()))
+    def read(self, r: ReadRequest, request_id: str) -> ReadResponse:
+        return ReadResponse(data=self.store.read(r.id), request_id=request_id)
 
-    def read_all(self, r: ReadAllRequest) -> ReadAllResponse:
-        return ReadAllResponse(data=self.store.read_all(), request_id=r.request_id or str(uuid4()))
+    def read_all(self, r: ReadAllRequest, request_id: str) -> ReadAllResponse:
+        return ReadAllResponse(data=self.store.read_all(r.id), request_id=request_id)
 
-    def update(self, r: UpdateRequest) -> UpdateResponse:
-        return UpdateResponse(data=self.store.update(r.data), request_id=r.request_id or str(uuid4()))
+    def update(self, r: UpdateRequest, request_id: str) -> UpdateResponse:
+        return UpdateResponse(data=self.store.update(r.data), request_id=request_id)
 
-    def delete(self, r: DeleteRequest) -> DeleteResponse:
-        return DeleteResponse(request_id=r.request_id or str(uuid4()))
+    def delete(self, r: DeleteRequest, request_id: str) -> DeleteResponse:
+        return DeleteResponse(success=self.store.delete(r.id), request_id=request_id)

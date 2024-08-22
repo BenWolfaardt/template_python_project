@@ -1,7 +1,10 @@
-from fastapi import APIRouter, HTTPException, Query
+from uuid import UUID, uuid4
+
+from fastapi import APIRouter, Query
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 
+from src.adapters.logger import Logger
 from src.core.interactors.api_db_crud import APICRUD
 from src.core.models.api_routers.db import (
     CreateRequest,
@@ -15,75 +18,128 @@ from src.core.models.api_routers.db import (
     UpdateRequest,
     UpdateResponse,
 )
-from src.core.ports.logging import Logging
+from src.core.models.exceptions import DataAlreadyExists, DataEmpty, DataIDNotDeleted, DataIDNotFound
 
 
 prefix = "/db"
 router = APIRouter(tags=["DB"], prefix=prefix)
 
 
-def parse_init_args_to_router_db(api_crud: APICRUD, logger: Logging) -> None:  # C901: too complex
-    @router.post("/")
-    async def create(request: CreateRequest) -> JSONResponse:
+def parse_init_args_to_router_db(api_crud: APICRUD, logger: Logger) -> None:  # C901: too complex
+    exceptions = logger.Exceptions(logger)
+
+    @router.post("/", response_model=CreateResponse)
+    async def create(
+        request: CreateRequest,
+        request_id: str | None = Query(None, description="Custom request ID"),
+    ) -> JSONResponse:
+        request_id = request_id or str(uuid4())
+
         try:
-            response_data: CreateResponse = api_crud.create(request)
+            response_data = api_crud.create(request, request_id)
             return JSONResponse(jsonable_encoder(response_data))
 
-        except Exception as e:
-            msg = f"Error creating: {e!s}"
-            logger.error(msg)
-            raise HTTPException(status_code=500, detail=msg) from e
+        # TODO: figure out how excepts propogate up the call stack from the sql_store level
+        except DataAlreadyExists as data_already_exists_exception:
+            msg = str(data_already_exists_exception)
+            logger.warning(msg)
+            return JSONResponse(status_code=404, content={"error_message": msg})
 
-    @router.get("/")
-    async def read(id: str = Query(..., description="ID"), request_id: str | None = None) -> JSONResponse:
+        except Exception as e:
+            exceptions.log_api_exception_and_raise_http_exception(
+                f"Error creating {request.data.id}", e, request_id, 500
+            )
+
+    @router.get("/", response_model=ReadResponse)
+    async def read(
+        id: UUID = Query(..., description="ID"),
+        request_id: str | None = Query(None, description="Custom request ID"),
+    ) -> JSONResponse:
+        request_id = request_id or str(uuid4())
+
         try:
-            request = ReadRequest(id=id, request_id=request_id)
-            response_data: ReadResponse = api_crud.read(request)
+            request = ReadRequest(id=id)
+            response_data = api_crud.read(request, request_id)
             return JSONResponse(jsonable_encoder(response_data))
 
-        except Exception as e:
-            msg = f"Error reading: {e!s}"
-            logger.error(msg)
-            raise HTTPException(status_code=500, detail=msg) from e
+        except DataIDNotFound as data_id_not_found_exception:
+            msg = str(data_id_not_found_exception)
+            logger.warning(msg)
+            return JSONResponse(status_code=404, content={"error_message": msg})
 
-    @router.get("/all")
-    async def read_all(request_id: str | None = None) -> JSONResponse:
-        # TODO have better handling if no data
+        except Exception as e:
+            exceptions.log_api_exception_and_raise_http_exception(f"Error creating {id}", e, request_id, 500)
+
+    @router.get("/all", response_model=ReadAllResponse)
+    async def read_all(
+        id: UUID | None = Query(None, description="Data's ID"),
+        request_id: str | None = Query(None, description="Custom request ID"),
+    ) -> JSONResponse:
+        request_id = request_id or str(uuid4())
+
         try:
-            request = ReadAllRequest(request_id=request_id)
-            response_data: ReadAllResponse = api_crud.read_all(request)
+            request = ReadAllRequest(id=id)
+            response_data = api_crud.read_all(request, request_id)
             return JSONResponse(jsonable_encoder(response_data))
 
+        except DataEmpty as data_empty_exception:
+            msg = str(data_empty_exception)
+            logger.warning(msg)
+            return JSONResponse(status_code=404, content={"error_message": msg})
+
         except Exception as e:
-            msg = f"Error reading all: {e!s}"
-            logger.error(msg)
-            raise HTTPException(status_code=500, detail=msg) from e
+            exceptions.log_api_exception_and_raise_http_exception(
+                f"Error reading all {id}", e, request_id, 500
+            )
 
     # TODO improve patch logic
-    @router.patch("/")
-    async def update(request: UpdateRequest) -> JSONResponse:
+    @router.patch("/", response_model=UpdateResponse)
+    async def update(
+        request: UpdateRequest,
+        request_id: str | None = Query(None, description="Custom request ID"),
+    ) -> JSONResponse:
+        request_id = request_id or str(uuid4())
+
         try:
-            request = UpdateRequest(data=request.data, request_id=request.request_id)
-            response_data: UpdateResponse = api_crud.update(request)
+            response_data = api_crud.update(request, request_id)
             return JSONResponse(jsonable_encoder(response_data))
 
-        except Exception as e:
-            msg = f"Error updating: {e!s}"
-            logger.error(msg)
-            raise HTTPException(status_code=500, detail=msg) from e
+        except DataIDNotFound as data_id_not_found_exception:
+            msg = str(data_id_not_found_exception)
+            logger.warning(msg)
+            return JSONResponse(status_code=404, content={"error_message": msg})
 
-    # TODO debug why its not deleting
-    @router.delete("/")
-    async def delete(id: str, request_id: str | None = None) -> JSONResponse:
+        except Exception as e:
+            exceptions.log_api_exception_and_raise_http_exception(
+                f"Error updating all {request.data.id}", e, request_id, 500
+            )
+
+    @router.delete("/", response_model=DeleteResponse)
+    async def delete(
+        id: UUID | None = Query(None, description="Data's ID"),
+        request_id: str | None = Query(None, description="Custom request ID"),
+    ) -> JSONResponse:
+        request_id = request_id or str(uuid4())
+
         try:
-            request = DeleteRequest(id=id, request_id=request_id)
-            response_data: DeleteResponse = api_crud.delete(request)
-            # TODO think about this?
-            response_dict = response_data.model_dump()
-            response_dict["success"] = True
-            return JSONResponse(response_dict)
+            request = DeleteRequest(id=id)
+            response_data = api_crud.delete(
+                request,
+                request_id,
+            )
+            return JSONResponse(jsonable_encoder(response_data))
+
+        except DataIDNotFound as data_id_not_found_exception:
+            msg = str(data_id_not_found_exception)
+            logger.warning(msg)
+            return JSONResponse(status_code=404, content={"error_message": msg})
+
+        except DataIDNotDeleted as data_id_not_deleted_exception:
+            msg = str(data_id_not_deleted_exception)
+            logger.exception(msg)
+            return JSONResponse(status_code=500, content={"error_message": msg})
 
         except Exception as e:
-            msg = f"Error deleting: {e!s}"
-            logger.error(msg)
-            raise HTTPException(status_code=500, detail=msg) from e
+            exceptions.log_api_exception_and_raise_http_exception(
+                f"Error deleting all {id}", e, request_id, 500
+            )

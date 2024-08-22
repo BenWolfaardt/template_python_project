@@ -14,7 +14,7 @@ class Store(ABC):
         pass
 
     @abstractmethod
-    def read_all(self) -> list[Data]:
+    def read_all(self, id: UUID | None) -> list[Data]:
         pass
 
     @abstractmethod
@@ -22,5 +22,5 @@ class Store(ABC):
         pass
 
     @abstractmethod
-    def delete(self, id: UUID) -> None:
+    def delete(self, id: UUID) -> bool:
         pass

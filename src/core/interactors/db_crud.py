@@ -15,11 +15,11 @@ class DBCRUD:
     def read(self, id: UUID) -> Data:
         return self.store.read(id)
 
-    def read_all(self) -> list[Data]:
-        return self.store.read_all()
+    def read_all(self, id: UUID | None) -> list[Data]:
+        return self.store.read_all(id)
 
-    def update(self, data: Data) -> bool:
+    def update(self, data: Data) -> Data:
         return self.store.update(data)
 
-    def delete(self, id: UUID) -> None:
+    def delete(self, id: UUID) -> bool:
         return self.store.delete(id)
