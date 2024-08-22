@@ -14,13 +14,12 @@ from src.controllers.api_routers.db import router as db_router
 from src.core.interactors.api_db_crud import APICRUD
 from src.core.interactors.db_crud import DBCRUD
 from src.core.models.configs import DBConfig
-from src.core.ports.logging import Logging
 
 
 class App:
     def __init__(self) -> None:
         self.settings: Settings = load_settings()
-        self.logger: Logging = Logger()
+        self.logger: Logger = Logger(self.settings.get_logger_config())
         self.store: SQLStore = None  # type: ignore[assignment]
 
     def setup_services(self) -> None:

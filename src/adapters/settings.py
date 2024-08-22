@@ -1,20 +1,24 @@
 import argparse
+import logging
 
 from copy import deepcopy
-from enum import Enum
 
 from envyaml import EnvYAML
 from pydantic import BaseModel
 
-from src.core.models.configs import DBConfig, ExecutionConfig, UvicornConfig
+from src.core.models.configs import DBConfig, Environment, ExecutionConfig, LoggerConfig, UvicornConfig
 from src.core.ports.settings import SettingsPort
 
 
-class Environment(str, Enum):
-    CONTAINERISED = "containerised"
-    LOCAL = "local"
-    TEST = "test"
-    PRODUCTION = "production"
+# TODO add @field_validator to config
+#   Potentially move to logger?
+LOGGING_LEVEL_MAPPING = {
+    "debug": logging.DEBUG,
+    "info": logging.INFO,
+    "warning": logging.WARNING,
+    "error": logging.ERROR,
+    "critical": logging.CRITICAL,
+}
 
 
 class InvalidEnvironmentError(argparse.ArgumentTypeError):
@@ -48,11 +52,15 @@ def load_settings() -> "Settings":
 
 class Settings(SettingsPort, BaseModel):
     execution: ExecutionConfig
+    logging: LoggerConfig
     db: DBConfig
     uvicorn: UvicornConfig
 
     def get_execution_config(self) -> ExecutionConfig:
         return self.execution
+
+    def get_logger_config(self) -> LoggerConfig:
+        return self.logging
 
     def get_db_config(self) -> DBConfig:
         return self.db
@@ -68,6 +76,9 @@ if __name__ == "__main__":
 
     execution_config = config.get_execution_config()
     print(f"Execution Configuration: {execution_config.to_json()}\n")
+
+    logging_config = config.get_logger_config()
+    print(f"Logger Configuration: {logging_config.to_json()}\n")
 
     db_config = config.get_db_config()
     print(f"DB Configuration: {db_config.to_json()}\n")

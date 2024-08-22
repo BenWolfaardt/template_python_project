@@ -1,6 +1,11 @@
 execution:
-  logging: "debug"  # TODO also in uvicorn
-  store_type: "SQL"
+  store_type: "sql"
+
+logging:
+  name: "TMPLT"
+  environment: "local"
+  level: "debug"  # TODO improve logic and consider uvicorn level
+  output_file: "template.log"
 
 db:
   user: ${LOCAL_DB_USER}
