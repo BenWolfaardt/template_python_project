@@ -1,4 +1,8 @@
+import signal
+import threading
+
 from threading import Thread
+from types import FrameType
 
 import uvicorn  # type: ignore
 
@@ -21,6 +25,8 @@ class App:
         self.settings: Settings = load_settings()
         self.logger: Logger = Logger(self.settings.get_logger_config())
         self.store: SQLStore = None  # type: ignore[assignment]
+        self.uvicorn_server: uvicorn.Server = None
+        self.shutdown_event = threading.Event()
 
     def setup_services(self) -> None:
         self.logger.info("Starting Template Service")
@@ -59,18 +65,44 @@ class App:
         self.logger.info("Starting the HTTP server")
         uvicorn_config = self.settings.get_uvicorn_config()
 
+        # TODO: consider editing logs here?
         def run_uvicorn() -> None:
-            uvicorn.run(
-                self.api.server,
-                host=uvicorn_config.host,
-                port=uvicorn_config.port,
-                log_level=uvicorn_config.log_level,
-            )
+            try:
+                config = uvicorn.Config(
+                    self.api.server,
+                    host=uvicorn_config.host,
+                    port=uvicorn_config.port,
+                    # TODO: configure
+                    # log_config=,
+                    # TODO: have this a universal value, not seperate
+                    log_level=uvicorn_config.log_level,
+                    use_colors=True,
+                )
+                self.uvicorn_server = uvicorn.Server(config)
+                self.uvicorn_server.run()
 
+            except Exception:
+                self.logger.exception("Uvicorn server encountered an error")
+
+        def shutdown_handler(signum: int, frame: FrameType | None) -> None:
+            _ = signum  # Corresponds to different signals (e.g., SIGINT, SIGTERM, SIGUSR1, etc.)
+            _ = frame  # Represents the current stack frame (allows you to inspect the call stack) at the time the signal was received
+            self.logger.info("Shutdown signal received")
+            self.shutdown_event.set()
+            if self.uvicorn_server:
+                self.uvicorn_server.should_exit = True
+
+        signal.signal(signal.SIGINT, shutdown_handler)
+        signal.signal(signal.SIGTERM, shutdown_handler)
+
+        self.logger.info("Starting Uvicorn FastAPI thread")
         uvicorn_thread = Thread(target=run_uvicorn)
         uvicorn_thread.start()
 
-        # TODO gracefully shutdown
+        self.shutdown_event.wait()
+
+        self.logger.info("Gracefully shutting down Uvicorn server")
+        uvicorn_thread.join()  # Wait for the Uvicorn thread to terminate
 
     def configure_and_start_service(self) -> None:
         self.setup_services()
