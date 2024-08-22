@@ -112,7 +112,7 @@ select = [
     "F",  # pyflakes
     "UP",  # pyupgrade
     "RUF",  # Ruff-specific rules
-    # "TRY",  # tryceratops
+    "TRY",  # tryceratops
 ]
 ignore = [
     "ANN101",  # Missing type annotation for `self` in method
@@ -120,6 +120,7 @@ ignore = [
     "E501",  # Line too long, handled by black
     "G004",  # Logging statements should not use f"..."
     "W191",  # Indentation contains tabs
+    "TRY301",  # Abstract raise to an inner function
 ]
 fixable = ["ALL"]
 unfixable = []
