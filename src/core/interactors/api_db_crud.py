@@ -19,7 +19,6 @@ from src.core.ports.store import Store
 class APICRUD:
     store: Store
 
-    # TODO don't create the uuid4 at Response level
     def create(self, r: CreateRequest, request_id: str) -> CreateResponse:
         return CreateResponse(data=self.store.create(r.data), request_id=request_id)
 
