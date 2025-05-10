@@ -68,7 +68,7 @@ Setup and run the pre-commit (uses .pre-commit-config.yaml):
 - [ ] Have the repetitive part of my README in a gist?
 - [ ] Add coverages reports
 - [ ] Add tests
-- [ ] Parse in logging level from config to logger
+- [x] Parse in logging level from config to logger
 - [ ] Better FastAPI exception handling: @app.exception_handler(Error)  # async def error_handler(_: Request, e: Error):
-- [ ] Add tracebacks to logging
+- [x] Add tracebacks to logging
 - [ ] Use dependabot
